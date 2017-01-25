@@ -32,6 +32,8 @@ namespace SParser
                     output = await parser.Load();
                     Console.Write(output);
                 }
+
+                Console.WriteLine();
                 Console.WriteLine(PressAnyKey);
             }
             catch (InvalidDataException ex)

@@ -7,11 +7,6 @@ using Ude;
 
 namespace SParser
 {
-    public enum DelimiterType
-    {
-        Comma = ',',
-        Pipe = '|'
-    }
     /// <summary>
     /// Data Buffer
     /// </summary>
@@ -39,11 +34,10 @@ namespace SParser
     /// <typeparam name="T">Type of the output of parsing process</typeparam>
     public interface IParser<T>
     {
-        DelimiterType Delimiter { get; }
         List<T> Parse();
         Task<List<T>> ParseAsync();
         bool EndOfData { get; }
-        string FilePath { get; set; }
+        string FilePath { get; }
     }
 
     /// <summary>
@@ -61,19 +55,17 @@ namespace SParser
             }
             this.FilePath = filePath;
             this.EndOfData = false;
-            this.Delimiter = DelimiterType.Comma;
-            this.DataBreakLimit = 30000;
+            this.DataChunkSize = 30000;
         }
 
         #endregion
 
         #region Properties
 
-        public string FilePath { get; set; }
-        public virtual DelimiterType Delimiter { get; private set; }
+        public string FilePath { get; private set; }
         public virtual bool EndOfData { get; private set; }
         protected virtual long Position { get; set; }
-        protected int DataBreakLimit { get; set; }
+        protected int DataChunkSize { get; set; }
 
         #endregion
 
@@ -84,6 +76,11 @@ namespace SParser
         protected const string EmptyLine = "Empty line number {0}";
         protected const string QuoteNotAllowed = "Quote is not allowed in a not quoted field value. Line {0}.";
         protected const string EndOfStream = "End of stream reached.";
+        protected const char Delimiter = ',';
+        protected const char Quote = '\"';
+        protected const char CarriageReturn = '\r';
+        protected const char LineFeed = '\n';
+        protected const char Space = ' ';
 
         #endregion
 
@@ -130,7 +127,22 @@ namespace SParser
                 {
                     switch (buffer.ContentBuffer[i])
                     {
-                        case '\"':
+                        case Delimiter:
+                            if (!isFieldQuoted || expectQuoteOrComma)
+                            {
+                                expectQuoteOrComma = false;
+                                isFieldQuoted = false;
+
+                                lineFields.Add(field.ToString());
+                                field.Clear();
+                            }
+                            else
+                            {
+                                field.Append(buffer.ContentBuffer[i]);
+                            }
+
+                            break;
+                        case Quote:
                             if (!isFieldQuoted)
                             {
                                 if (!string.IsNullOrEmpty(field.ToString()))
@@ -154,13 +166,13 @@ namespace SParser
 
                             break;
 
-                        case '\r':
+                        case CarriageReturn:
                             if (isFieldQuoted && !expectQuoteOrComma)
                             {
                                 field.Append(buffer.ContentBuffer[i]);
                             }
                             break;
-                        case '\n':
+                        case LineFeed:
                             if (string.IsNullOrEmpty(field.ToString()))
                             {
                                 throw new InvalidDataException(string.Format(EmptyLine, results.Count + 1));
@@ -188,29 +200,14 @@ namespace SParser
 
                             break;
 
-                        case ' ':
-                            if (expectQuoteOrComma)
-                            {
-                                throw new InvalidDataException(string.Format(QuoteExpected, results.Count + 1));
-                            }
-                            if (isFieldQuoted)
-                            {
-                                field.Append(buffer.ContentBuffer[i]);
-                            }
-                            break;
-
                         default:
-                            if (buffer.ContentBuffer[i] == (char)this.Delimiter)
+                            if (Char.IsWhiteSpace(buffer.ContentBuffer[i]))
                             {
-                                if (!isFieldQuoted || expectQuoteOrComma)
+                                if (expectQuoteOrComma)
                                 {
-                                    expectQuoteOrComma = false;
-                                    isFieldQuoted = false;
-
-                                    lineFields.Add(field.ToString());
-                                    field.Clear();
+                                    throw new InvalidDataException(string.Format(QuoteExpected, results.Count + 1));
                                 }
-                                else
+                                if (isFieldQuoted)
                                 {
                                     field.Append(buffer.ContentBuffer[i]);
                                 }
@@ -223,6 +220,7 @@ namespace SParser
                                 }
                                 field.Append(buffer.ContentBuffer[i]);
                             }
+
                             break;
                     }
                 }
@@ -231,7 +229,7 @@ namespace SParser
                 {
                     this.EndOfData = true;
                 }
-                if (allReadChars > this.DataBreakLimit)
+                if (allReadChars > this.DataChunkSize)
                 {
                     this.Position = buffer.Position;
                     break;
