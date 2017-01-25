@@ -1,0 +1,10 @@
+c:\users\piotr\documents\visual studio 2015\Projects\SParser\SParser\bin\Debug\SParser.exe.config
+C:\Users\piotr\documents\visual studio 2015\Projects\SParser\SParser\bin\Debug\SParser.exe
+C:\Users\piotr\documents\visual studio 2015\Projects\SParser\SParser\bin\Debug\SParser.pdb
+C:\Users\piotr\documents\visual studio 2015\Projects\SParser\SParser\obj\Debug\SParser.exe
+C:\Users\piotr\documents\visual studio 2015\Projects\SParser\SParser\obj\Debug\SParser.pdb
+C:\Users\piotr\documents\visual studio 2015\Projects\SParser\SParser\bin\Debug\SParser.exe.CodeAnalysisLog.xml
+C:\Users\piotr\documents\visual studio 2015\Projects\SParser\SParser\bin\Debug\SParser.exe.lastcodeanalysissucceeded
+C:\Users\piotr\Source\Repos\devexp\SParser\bin\Debug\SParser.exe.config
+C:\Users\piotr\Source\Repos\devexp\SParser\obj\Debug\SParser.exe
+C:\Users\piotr\Source\Repos\devexp\SParser\obj\Debug\SParser.pdb
