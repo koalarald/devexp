@@ -70,10 +70,20 @@ namespace SParser
         #region Properties
 
         public string FilePath { get; set; }
-        public virtual DelimiterType Delimiter { get; }
+        public virtual DelimiterType Delimiter { get; private set; }
         public virtual bool EndOfData { get; private set; }
         protected virtual long Position { get; set; }
         protected int DataBreakLimit { get; set; }
+
+        #endregion
+
+        #region Constants
+
+        protected const string QuoteExpected = "Quote expected in line {0}.";
+        protected const string WrongFields = "Wrong number of fields({0}) in line number {1}. Expected {2}.";
+        protected const string EmptyLine = "Empty line number {0}";
+        protected const string QuoteNotAllowed = "Quote is not allowed in a not quoted field value. Line {0}.";
+        protected const string EndOfStream = "End of stream reached.";
 
         #endregion
 
@@ -104,7 +114,7 @@ namespace SParser
         {
             if (this.EndOfData)
             {
-                throw new EndOfStreamException("End of stream reached.");
+                throw new EndOfStreamException(EndOfStream);
             }
             var allReadChars = 0;
             var expectQuoteOrComma = false;
@@ -113,10 +123,6 @@ namespace SParser
             var results = new List<List<string>>();
             var field = new StringBuilder(string.Empty);
             var buffer = new BufferInfo();
-            if (this.Position != 0)
-            {
-                buffer.Position = this.Position;
-            }
 
             while ((buffer = this.Read(buffer.Position)).ReadChars > 0)
             {
@@ -129,7 +135,7 @@ namespace SParser
                             {
                                 if (!string.IsNullOrEmpty(field.ToString()))
                                 {
-                                    throw new InvalidDataException(string.Format("Quote is not allowed in a not quoted field value. Line {0}.", results.Count + 1));
+                                    throw new InvalidDataException(string.Format(QuoteNotAllowed, results.Count + 1));
                                 }
                                 isFieldQuoted = true;
                             }
@@ -157,13 +163,13 @@ namespace SParser
                         case '\n':
                             if (string.IsNullOrEmpty(field.ToString()))
                             {
-                                throw new InvalidDataException(string.Format("Empty line number {0}", results.Count + 1));
+                                throw new InvalidDataException(string.Format(EmptyLine, results.Count + 1));
                             }
                             if (!isFieldQuoted || expectQuoteOrComma)
                             {
                                 if (results.Count > 0 && results[0].Count != lineFields.Count + 1)
                                 {
-                                    throw new InvalidDataException(string.Format("Wrong number of fields({0}) in line number {1}. Expected {2}.",
+                                    throw new InvalidDataException(string.Format(WrongFields,
                                         lineFields.Count, results.Count + 1, results[0].Count + 1));
                                 }
 
@@ -185,7 +191,7 @@ namespace SParser
                         case ' ':
                             if (expectQuoteOrComma)
                             {
-                                throw new InvalidDataException(string.Format("Quote expected in line {0}.", results.Count + 1));
+                                throw new InvalidDataException(string.Format(QuoteExpected, results.Count + 1));
                             }
                             if (isFieldQuoted)
                             {
@@ -213,7 +219,7 @@ namespace SParser
                             {
                                 if (expectQuoteOrComma)
                                 {
-                                    throw new InvalidDataException(string.Format("Quote expected in line {0}.", results.Count + 1));
+                                    throw new InvalidDataException(string.Format(QuoteExpected, results.Count + 1));
                                 }
                                 field.Append(buffer.ContentBuffer[i]);
                             }
@@ -241,7 +247,7 @@ namespace SParser
                 }
                 else
                 {
-                    throw new InvalidDataException(string.Format("Quote expected in line {0}.", results.Count + 1));
+                    throw new InvalidDataException(string.Format(QuoteExpected, results.Count + 1));
                 }
             }
             return results;
@@ -262,10 +268,11 @@ namespace SParser
     /// </summary>
     public class SVExtendedParser : SVParser
     {
-        protected virtual Encoding FileEncoding { get; set; }
         public SVExtendedParser(string filePath) : base(filePath)
         {
         }
+
+        protected virtual Encoding FileEncoding { get; set; }
 
         #region Methods
 

@@ -5,18 +5,19 @@ namespace SParser
 {
     class Program
     {
+        private const string PressAnyKey = "Press any key to exit...";
+
         static void Main(string[] args)
         {
             var cArgs = new CommandArgs();
             if (!CommandLine.Parser.Default.ParseArguments(args, cArgs))
             {
-                Console.WriteLine("Press any key to exit...");
+                Console.WriteLine(PressAnyKey);
             }
             else
             {
                 RunParsing(cArgs);
             }
-
 
             Console.ReadKey();
         }
@@ -31,17 +32,20 @@ namespace SParser
                     output = await parser.Load();
                     Console.Write(output);
                 }
+                Console.WriteLine(PressAnyKey);
             }
             catch (InvalidDataException ex)
             {
                 Console.WriteLine(ex.GetType().FullName);
                 Console.WriteLine(ex.Message);
-                Console.WriteLine("Press any key to exit...");
+                Console.WriteLine();
+                Console.WriteLine(PressAnyKey);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.WriteLine("Press any key to exit...");
+                Console.WriteLine();
+                Console.WriteLine(PressAnyKey);
             }
         }
     }

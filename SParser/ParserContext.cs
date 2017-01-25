@@ -42,6 +42,14 @@ namespace SParser
 
         #endregion
 
+        #region Fields
+
+        protected const string DataFormatAlignment = "{0,-20}";
+        protected const string DataFormatSeparator = "|{0}|";
+        protected const string DataFormatShort = "|{0}...|";
+
+        #endregion
+
         #region Methods
 
         /// <summary>
@@ -92,7 +100,7 @@ namespace SParser
             {
                 foreach (string field in fieldsLine)
                 {
-                    results.Append(string.Format("{0,-20}", field.Length < 20 ? string.Format("|{0}|", field) : string.Format("|{0}...|", field.Substring(0, 14))));
+                    results.Append(string.Format(DataFormatAlignment, field.Length < 20 ? string.Format(DataFormatSeparator, field) : string.Format(DataFormatShort, field.Substring(0, 14))));
                 }
                 results.AppendLine();
             }
