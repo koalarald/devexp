@@ -10,8 +10,6 @@ namespace SParser
             var cArgs = new CommandArgs();
             if (!CommandLine.Parser.Default.ParseArguments(args, cArgs))
             {
-                Console.WriteLine("Bad arguments.");
-                Console.WriteLine(cArgs.GetUsage());
                 Console.WriteLine("Press any key to exit...");
             }
             else
