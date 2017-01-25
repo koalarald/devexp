@@ -16,8 +16,14 @@ namespace SParser
         public ParserContext(string filePath, string filterColumn = null, string filterValue = null)
         {
             this.FilePath = filePath;
-            this.FilterColumn = filterColumn;
-            this.FilterValue = filterValue;
+            if (!string.IsNullOrWhiteSpace(filterColumn))
+            {
+                this.FilterColumn = filterColumn.ToLowerInvariant();
+            }
+            if (!string.IsNullOrWhiteSpace(filterValue))
+            {
+                this.FilterValue = filterValue.ToLowerInvariant();
+            }
         }
 
         #endregion
@@ -68,7 +74,7 @@ namespace SParser
                 List<List<string>> dataList = await this.Parser.ParseAsync();
 
                 if (!string.IsNullOrEmpty(this.FilterColumn) && !string.IsNullOrEmpty(this.FilterValue)
-                    && dataList.Count > 0 && dataList[0].Contains(this.FilterColumn))
+                    && dataList.Count > 0 && dataList[0].Select(t => t.ToLowerInvariant()).Contains(this.FilterColumn))
                 {
                     dataList = await this.FilterDataAsync(dataList);
                 }
@@ -81,7 +87,7 @@ namespace SParser
         {
             var Results = new List<List<string>>();
             List<string> header = dataList[0];
-            int filterColumnIndex = header.IndexOf(this.FilterColumn);
+            int filterColumnIndex = header.Select(t => t.ToLowerInvariant()).ToList().IndexOf(this.FilterColumn);
             Results = dataList.Where(p => p[filterColumnIndex].Equals(this.FilterValue, StringComparison.InvariantCultureIgnoreCase)).ToList();
             Results.Insert(0, header);
 

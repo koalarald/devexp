@@ -38,16 +38,11 @@ namespace SParser
             }
             catch (InvalidDataException ex)
             {
-                Console.WriteLine(ex.GetType().FullName);
-                Console.WriteLine(ex.Message);
-                Console.WriteLine();
-                Console.WriteLine(PressAnyKey);
+                throw;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine();
-                Console.WriteLine(PressAnyKey);
+                throw;
             }
         }
     }
