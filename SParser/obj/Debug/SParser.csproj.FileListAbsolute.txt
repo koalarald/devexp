@@ -10,5 +10,3 @@ C:\Users\piotr\Source\Repos\devexp\SParser\obj\Debug\SParser.exe
 C:\Users\piotr\Source\Repos\devexp\SParser\obj\Debug\SParser.pdb
 C:\Users\piotr\Source\Repos\devexp\SParser\bin\Debug\SParser.exe
 C:\Users\piotr\Source\Repos\devexp\SParser\bin\Debug\SParser.pdb
-C:\Users\piotr\Source\Repos\devexp\SParser\bin\Debug\SParser.exe.CodeAnalysisLog.xml
-C:\Users\piotr\Source\Repos\devexp\SParser\bin\Debug\SParser.exe.lastcodeanalysissucceeded

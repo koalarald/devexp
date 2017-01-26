@@ -41,7 +41,22 @@ namespace SParser
                 return this.Parser.EndOfData;
             }
         }
-        protected virtual IParser<List<string>> Parser { get; set; }
+        public virtual Encoding FileEncoding
+        {
+            get
+            {
+                if (this.Parser == null)
+                {
+                    return Encoding.Default;
+                }
+                return this.Parser.FileEncoding;
+            }
+            set
+            {
+                this.Parser.FileEncoding = value;
+            }
+        }
+        protected virtual IExtendedParser<List<string>> Parser { get; set; }
         private string FilePath { get; set; }
         private string FilterColumn { get; set; }
         private string FilterValue { get; set; }

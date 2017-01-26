@@ -40,6 +40,15 @@ namespace SParser
         string FilePath { get; }
     }
 
+    public interface IExtendedParser<T>
+    {
+        List<T> Parse();
+        Task<List<T>> ParseAsync();
+        bool EndOfData { get; }
+        string FilePath { get; }
+        Encoding FileEncoding { get; set; }
+    }
+
     /// <summary>
     /// SV Parser
     /// </summary>
@@ -264,13 +273,13 @@ namespace SParser
     /// <summary>
     /// SV Extended Parser
     /// </summary>
-    public class SVExtendedParser : SVParser
+    public class SVExtendedParser : SVParser, IExtendedParser<List<string>>
     {
         public SVExtendedParser(string filePath) : base(filePath)
         {
         }
 
-        protected virtual Encoding FileEncoding { get; set; }
+        public virtual Encoding FileEncoding { get; set; }
 
         #region Methods
 
