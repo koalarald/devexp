@@ -13,13 +13,12 @@ namespace SParser
             if (!CommandLine.Parser.Default.ParseArguments(args, cArgs))
             {
                 Console.WriteLine(PressAnyKey);
-                Console.ReadKey();
             }
             else
             {
                 RunParsing(cArgs);
-                Console.ReadKey();
             }
+            Console.ReadKey();
         }
         static async void RunParsing(CommandArgs cArgs)
         {
@@ -35,7 +34,6 @@ namespace SParser
                     Console.OutputEncoding = parser.FileEncoding;
                     Console.Write(output);
                 }
-
                 Console.WriteLine();
                 Console.WriteLine(PressAnyKey);
             }
