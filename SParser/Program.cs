@@ -27,9 +27,11 @@ namespace SParser
             try
             {
                 var parser = new ParserContext(cArgs.FilePath, cArgs.FilterColumn, cArgs.FilterValue);
+                //reading in chunks to avoid issues
                 while (!parser.EndOfData)
                 {
                     output = await parser.Load();
+                    Console.Clear();
                     Console.OutputEncoding = parser.FileEncoding;
                     Console.Write(output);
                 }
