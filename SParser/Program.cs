@@ -25,7 +25,7 @@ namespace SParser
             string output = string.Empty;
             try
             {
-                var parser = new ParserContext(cArgs.FilePath, cArgs.FilterColumn, cArgs.FilterValue);
+                var parser = new ParserContext(new SVExtendedParser(cArgs.FilePath), cArgs.FilterColumn, cArgs.FilterValue);
                 //reading in chunks to avoid issues
                 while (!parser.EndOfData)
                 {

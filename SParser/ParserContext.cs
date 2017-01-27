@@ -13,16 +13,20 @@ namespace SParser
     {
         #region Constructors
 
-        public ParserContext(string filePath, string filterColumn = null, string filterValue = null)
+        public ParserContext(IExtendedParser<List<string>> parser, string filterColumn = null, string filterValue = null)
         {
-            this.FilePath = filePath;
+            if (parser == null)
+            {
+                throw new ArgumentNullException("Parser is null");
+            }
+            this.Parser = parser;
             if (!string.IsNullOrWhiteSpace(filterColumn))
             {
-                this.FilterColumn = filterColumn.ToLowerInvariant();
+                this.FilterColumn = filterColumn;
             }
             if (!string.IsNullOrWhiteSpace(filterValue))
             {
-                this.FilterValue = filterValue.ToLowerInvariant();
+                this.FilterValue = filterValue;
             }
         }
 
@@ -30,6 +34,7 @@ namespace SParser
 
         #region Properties
 
+        protected IExtendedParser<List<string>> Parser { get; set; }
         public virtual bool EndOfData
         {
             get
@@ -56,10 +61,14 @@ namespace SParser
                 this.Parser.FileEncoding = value;
             }
         }
-        protected virtual IExtendedParser<List<string>> Parser { get; set; }
-        private string FilePath { get; set; }
         private string FilterColumn { get; set; }
         private string FilterValue { get; set; }
+
+        #endregion
+
+        #region Constants
+
+        protected const string ParserNull = "Parser is null";
 
         #endregion
 
@@ -79,10 +88,6 @@ namespace SParser
         /// <returns>Output of parsing</returns>
         public virtual async Task<string> Load()
         {
-            if (this.Parser == null)
-            {
-                this.Parser = new SVExtendedParser(this.FilePath);
-            }
             string Results = string.Empty;
             if (!this.Parser.EndOfData)
             {
