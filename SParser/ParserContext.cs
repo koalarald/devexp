@@ -34,7 +34,7 @@ namespace SParser
 
         #region Properties
 
-        protected IExtendedParser<List<string>> Parser { get; set; }
+        protected virtual IExtendedParser<List<string>> Parser { get; private set; }
         public virtual bool EndOfData
         {
             get
@@ -103,7 +103,7 @@ namespace SParser
             return Results;
         }
 
-        protected virtual List<List<string>> FilterData(List<List<string>> dataList)
+        public virtual List<List<string>> FilterData(List<List<string>> dataList)
         {
             var Results = new List<List<string>>();
             List<string> header = dataList[0];
@@ -114,12 +114,12 @@ namespace SParser
             return Results;
         }
 
-        protected virtual async Task<List<List<string>>> FilterDataAsync(List<List<string>> dataList)
+        public virtual async Task<List<List<string>>> FilterDataAsync(List<List<string>> dataList)
         {
             return await Task.Run(() => this.FilterData(dataList));
         }
 
-        protected virtual string FormatData(List<List<string>> dataList)
+        public virtual string FormatData(List<List<string>> dataList)
         {
             StringBuilder results = new StringBuilder();
             foreach (List<string> fieldsLine in dataList)
@@ -133,7 +133,7 @@ namespace SParser
             return results.ToString();
         }
 
-        protected virtual async Task<string> FormatDataAsync(List<List<string>> dataList)
+        public virtual async Task<string> FormatDataAsync(List<List<string>> dataList)
         {
             return await Task.Run(() => this.FormatData(dataList));
         }
