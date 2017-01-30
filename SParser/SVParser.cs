@@ -18,12 +18,6 @@ namespace SParser
             this.ReadChars = 0;
             this.ContentBuffer = new char[8192];
         }
-        public BufferInfo(int position, int readChars, char[] contentBuffer) : this()
-        {
-            this.Position = position;
-            this.ReadChars = readChars;
-            this.ContentBuffer = contentBuffer;
-        }
         public long Position { get; set; }
         public int ReadChars { get; set; }
         public char[] ContentBuffer { get; set; }
@@ -283,7 +277,7 @@ namespace SParser
 
         #region Methods
 
-        protected virtual Encoding GetFileEncoding()
+        public virtual Encoding GetFileEncoding()
         {
             var encDetector = new CharsetDetector();
 
