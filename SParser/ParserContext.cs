@@ -13,7 +13,7 @@ namespace SParser
     {
         #region Constructors
 
-        public ParserContext(IExtendedParser<List<string>> parser, string filterColumn = null, string filterValue = null)
+        public ParserContext(IExtendedParser<List<string>> parser, string filterColumn, string filterValue)
         {
             if (parser == null)
             {
