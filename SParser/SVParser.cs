@@ -54,7 +54,7 @@ namespace SParser
         {
             if (string.IsNullOrEmpty(filePath))
             {
-                throw new ArgumentNullException("File path is null.");
+                throw new ArgumentNullException(FilePathNull);
             }
             this.FilePath = filePath;
             this.EndOfData = false;
@@ -65,8 +65,8 @@ namespace SParser
 
         #region Properties
 
-        public string FilePath { get; private set; }
-        public virtual bool EndOfData { get; private set; }
+        public string FilePath { get; protected set; }
+        public bool EndOfData { get; protected set; }
         protected virtual long Position { get; set; }
         protected int DataChunkSize { get; set; }
 
@@ -74,6 +74,7 @@ namespace SParser
 
         #region Constants
 
+        protected const string FilePathNull = "File path is null.";
         protected const string QuoteExpected = "Quote expected in line {0}.";
         protected const string WrongFields = "Wrong number of fields({0}) in line number {1}. Expected {2}.";
         protected const string EmptyLine = "Empty line number {0}";
@@ -271,9 +272,11 @@ namespace SParser
     {
         public SVExtendedParser(string filePath) : base(filePath)
         {
+            this.CheckChunkSize = 40960;
         }
 
         public virtual Encoding FileEncoding { get; set; }
+        protected long CheckChunkSize { get; set; }
 
         #region Methods
 
@@ -281,14 +284,13 @@ namespace SParser
         {
             var encDetector = new CharsetDetector();
 
+            //check only part of the content
             using (var fs = new FileStream(this.FilePath, FileMode.Open))
             {
-                byte[] buffer = new byte[8192];
+                byte[] buffer = new byte[this.CheckChunkSize];
                 int readBytes;
-                while ((readBytes = fs.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    encDetector.Feed(buffer, 0, readBytes);
-                }
+                readBytes = fs.Read(buffer, 0, buffer.Length);
+                encDetector.Feed(buffer, 0, readBytes);
                 encDetector.DataEnd();
             }
 
